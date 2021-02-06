@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
+    <RepositoryUrl>https://github.com/cloudkitects/Stellar.FuzzyString</RepositoryUrl>
   </PropertyGroup>
 
   <ItemGroup>
