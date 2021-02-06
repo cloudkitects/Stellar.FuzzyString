@@ -121,7 +121,7 @@ namespace Cloudkitects.Stellar.FuzzyString.Tests
         {
             var headers = new[]
             {
-                "TCB Loan Number", "Seller Loan Number", "Borrower Number", "First Name", "Middle Name", "Last Name",
+                "XYZ Loan Number", "Seller Loan Number", "Borrower Number", "First Name", "Middle Name", "Last Name",
                 "Suffix", "SSN", "Birth Date", "Marital Status", "US Citizen", "Citizenship Type",
                 "Permanent Resident Alien", "Identification Issuer", "Identification Number", "Identification Type",
                 "Military Status", "Honorable Discharge", "Intent to Occupy", "First Time Homebuyer", "Email ", "Phone",
