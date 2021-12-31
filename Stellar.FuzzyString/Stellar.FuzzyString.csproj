@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net5.0</TargetFramework>
     <RepositoryUrl>https://github.com/cloudkitects/Stellar.FuzzyString</RepositoryUrl>
   </PropertyGroup>
 

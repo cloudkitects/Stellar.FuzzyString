@@ -5,7 +5,7 @@ using System.IO;
 using Newtonsoft.Json;
 using NUnit.Framework;
 
-namespace Cloudkitects.Stellar.FuzzyString.Tests
+namespace Stellar.FuzzyString.Tests
 {
     [TestFixture]
     public class FuzzyStringTests
@@ -53,6 +53,31 @@ namespace Cloudkitects.Stellar.FuzzyString.Tests
                 _testCases = JsonConvert.DeserializeObject<TestCase[]>(File.ReadAllText(file));
 
                 return _testCases;
+            }
+        }
+
+        /// <summary>
+        /// Backup field to cache test headers.
+        /// </summary>
+        private static string[] _headers;
+
+        /// <summary>
+        /// Property to be used in test attributes.
+        /// </summary>
+        public static string[] Headers
+        {
+            get
+            {
+                if (_headers != null)
+                {
+                    return _headers;
+                }
+
+                var file = Path.Combine(TestContext.CurrentContext.TestDirectory, "headers.json");
+
+                _headers = JsonConvert.DeserializeObject<string[]>(File.ReadAllText(file));
+
+                return _headers;
             }
         }
 
@@ -116,45 +141,23 @@ namespace Cloudkitects.Stellar.FuzzyString.Tests
             Assert.That(Math.Abs(average - testCase.Average) < Epsilon);
         }
 
-        [Test]
-        public void Test1()
+        [TestCase("Indicator if Retired?", 94, 0.942028985507246)]
+        [TestCase("Present Other Financing", 55, 0.855652173913043)]
+        [TestCase("Present Address Street", 42, 0.95)]
+        public void TestHeaders(string source, int index, double similarity)
         {
-            var headers = new[]
-            {
-                "XYZ Loan Number", "Seller Loan Number", "Borrower Number", "First Name", "Middle Name", "Last Name",
-                "Suffix", "SSN", "Birth Date", "Marital Status", "US Citizen", "Citizenship Type",
-                "Permanent Resident Alien", "Identification Issuer", "Identification Number", "Identification Type",
-                "Military Status", "Honorable Discharge", "Intent to Occupy", "First Time Homebuyer", "Email ", "Phone",
-                "Fax", "Alternate Name 1", "Alternate Name 2", "Alternate Name 3", "Alternate Name 4",
-                "Alternate Name 5", "No of Dependents", "Dependents age 1", "Dependents age 2", "Dependents age 3",
-                "Dependents age 4", "I do not wish to furnish this information", "Ethnicity", "Race 1 ", "Race 2 ",
-                "Race 3", "Race 4", "Race 5", "Sex", "Present Address Rent Box Checked", "Present Address Street 1",
-                "Present Address Street 2", "Present Address City", "Present Address State", "Present Address Zip",
-                "Present Address Years in Residence", "Present Address Home Phone", "Present Rent",
-                "Present First Mortgage (P&I)", "Present Hazard", "Present HOA Dues", "Present MI", "Present Other",
-                "Present Other Financning (P&I)", "Present Real Estate Taxes", "Present Total",
-                "Former Address Rent Box Checked", "Former Address Street 1", "Former Address Street 2",
-                "Former Address City", "Former Address State", "Former Address Zip",
-                "Former Address Years in Residence", "Mailing Address Street 1", "Mailing Address Street 2",
-                "Mailing Address City", "Mailing Address State", "Mailing Address Zip", "Employer 1",
-                "Employer 1 Address City", "Employer 1 Address State", "Employer 1 Address Street",
-                "Employer 1 Address Street 2", "Employer 1 Address Zip", "Employer 1 Mthly Income", "Employer 1 Phone",
-                "Employer 1 Position", "Employer 1 Self Employed", "Employer 1 Years in Line of Work",
-                "Employer 1 Yrs on Job", "Employer 2", "Employer 2 Address City", "Employer 2 Address State",
-                "Employer 2 Address Street", "Employer 2 Address Street 2", "Employer 2 Address Zip",
-                "Employer 2 Begin Date", "Employer 2 End Date", "Employer 2 Mthly Income", "Employer 2 Phone",
-                "Employer 2 Position", "Employer 2 Self Employed", "[Indicator if Retired?]", "Base Income",
-                "Bonuses Income", "Commission Income", "Dividend/Interest Income", "Net Rental Income", "OT Income",
-                "Other Income", "total_monthly_income", "borrower_monthly_wage_income", "Equifax Beacon Score",
-                "Experian Score", "Trans Union - Empirica Score", "Borrower_Exclude"
-            };
+            var match = Comparer.BestMatch(source, Headers);
 
-            const string column = "Indicator if Retired?";
+            Assert.That(match.Index == index &&
+                        Math.Abs(match.Similarity - similarity) < Epsilon);
+        }
 
-            var bestMatch = Comparer.BestMatch(column, headers);
+        [TestCase("Present Address Street", "Present Address Street 1", 0.95)]
+        public void TestMatch(string source, string target, double similarity)
+        {
+            var match = Comparer.BestMatch(source, new []{ target });
 
-            Assert.That(bestMatch.Index == 94 &&
-                        Math.Abs(bestMatch.Similarity - 0.94202898550724634) < Epsilon);
+            Assert.That(Math.Abs(match.Similarity - similarity) < Epsilon);
         }
     }
 }

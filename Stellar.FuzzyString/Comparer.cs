@@ -16,13 +16,15 @@
 // that was provided with the Content. If no such license exists, contact the Re-distributor.
 // Unless otherwise indicated below, the terms and conditions of the EPL still apply to any
 // source code in the Content and such source code may be obtained at http://www.eclipse.org.
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+
 using JetBrains.Annotations;
 
-namespace Cloudkitects.Stellar.FuzzyString
+namespace Stellar.FuzzyString
 {
     public static class Comparer
     {
@@ -37,21 +39,22 @@ namespace Cloudkitects.Stellar.FuzzyString
         /// </summary>
         /// <param name="source">The source string.</param>
         /// <param name="targets">The target string collection.</param>
-        /// <param name="comparisonOptions">Similarity comparison options.</param>
-        /// <returns></returns>
+        /// <param name="options">Similarity comparison options.</param>
+        /// <returns>The best (highest similarity) match for source within targets.</returns>
+        /// <remarks>In this version the first match between several with the
+        /// same similarity wins (older versions picked the last one).</remarks>
         public static FuzzyMatch BestMatch(
             string source,
             string[] targets,
-            ComparisonOptions comparisonOptions = ComparisonOptions.UseJaroWinklerSimilarity |
-                                                  ComparisonOptions.UseLevenshteinSimilarity)
+            ComparisonOptions options = ComparisonOptions.UseDefault)
         {
             if (targets == null || targets.Length == 0)
             {
                 return null;
             }
 
-            return Matches(source, targets, comparisonOptions)
-                .Aggregate((a, b) => a.Similarity > b.Similarity ? a : b);
+            return Matches(source, targets, options)
+                .Aggregate((a, b) => a.Similarity >= b.Similarity ? a : b);
         }
 
         /// <summary>
@@ -61,13 +64,12 @@ namespace Cloudkitects.Stellar.FuzzyString
         /// </summary>
         /// <param name="source">The source string.</param>
         /// <param name="targets">The target string collection.</param>
-        /// <param name="comparisonOptions">Similarity comparison options.</param>
+        /// <param name="options">Similarity comparison options.</param>
         /// <returns></returns>
         public static IEnumerable<FuzzyMatch> Matches(
             string source,
             string[] targets,
-            ComparisonOptions comparisonOptions = ComparisonOptions.UseJaroWinklerSimilarity |
-                                                  ComparisonOptions.UseJaroWinklerSimilarity)
+            ComparisonOptions options = ComparisonOptions.UseDefault)
         {
             if (targets == null || targets.Length == 0)
             {
@@ -78,7 +80,7 @@ namespace Cloudkitects.Stellar.FuzzyString
                 .Select((target, index) => new FuzzyMatch
                 {
                     Index = index,
-                    Similarity = SimilarityScore(source, target, comparisonOptions),
+                    Similarity = SimilarityScore(source, target, options),
                     Source = source,
                     Target = target
                 });
@@ -114,7 +116,7 @@ namespace Cloudkitects.Stellar.FuzzyString
         {
             var results = new List<double>();
 
-            if ((options & ComparisonOptions.CaseInsensitive) != 0)
+            if ((options & ComparisonOptions.UseCaseInsensitive) != 0)
             {
                 source = source.ToUpper();
                 target = target.ToUpper();
@@ -396,7 +398,7 @@ namespace Cloudkitects.Stellar.FuzzyString
             p = Math.Max(0, Math.Min(p, 0.25));
 
             var m = Math.Min(4, Math.Min(source.Length, target.Length));
-            var l = source.Substring(0, m).Where((c, i) => c.Equals(target[i])).Sum(c => 1d);
+            var l = source[..m].Where((c, i) => c.Equals(target[i])).Sum(_ => 1d);
 
             return s + l * p * (1 - s);
         }
@@ -592,9 +594,7 @@ namespace Cloudkitects.Stellar.FuzzyString
         {
             if (string.IsNullOrEmpty(source))
             {
-                return string.IsNullOrEmpty(target)
-                    ? 0
-                    : target.Length;
+                return target?.Length ?? 0;
             }
 
             if (string.IsNullOrEmpty(target))
@@ -603,10 +603,10 @@ namespace Cloudkitects.Stellar.FuzzyString
             }
 
             var n = Math.Min(source.Length, target.Length);
-            var s = source.Substring(0, n);
-            var t = target.Substring(0, n);
+            var s = source[..n];
+            var t = target[..n];
 
-            return s.Where((c, i) => !c.Equals(t[i])).Sum(c => 1d) + Math.Abs(source.Length - target.Length);
+            return s.Where((c, i) => !c.Equals(t[i])).Sum(_ => 1d) + Math.Abs(source.Length - target.Length);
         }
 
         /// <summary>
@@ -621,9 +621,7 @@ namespace Cloudkitects.Stellar.FuzzyString
         {
             if (string.IsNullOrEmpty(source))
             {
-                return string.IsNullOrEmpty(target)
-                    ? 0
-                    : target.Length;
+                return target?.Length ?? 0;
             }
 
             if (string.IsNullOrEmpty(target))
@@ -636,7 +634,7 @@ namespace Cloudkitects.Stellar.FuzzyString
                 return Math.Max(source.Length, target.Length);
             }
 
-            return source.Where((c, i) => !c.Equals(target[i])).Sum(c => 1d);
+            return source.Where((c, i) => !c.Equals(target[i])).Sum(_ => 1d);
         }
 
         /// <summary>
@@ -656,9 +654,7 @@ namespace Cloudkitects.Stellar.FuzzyString
         {
             if (string.IsNullOrEmpty(source))
             {
-                return string.IsNullOrEmpty(target)
-                    ? 0
-                    : target.Length;
+                return target?.Length ?? 0;
             }
 
             if (string.IsNullOrEmpty(target))

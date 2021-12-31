@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Cloudkitects.Stellar.FuzzyString
+namespace Stellar.FuzzyString
 {
     /// <summary>
     /// Algorithms and options to use in the comparison.
@@ -31,14 +31,16 @@ namespace Cloudkitects.Stellar.FuzzyString
         UseRatcliffObershelpSimilarity = 256,
         UseSorensenDiceCoefficient = 512,
 
-        UseAll = UseEditSimilarity |
-                 UseHammingSimilarity |
-                 UseJaccardIndex | UseJaroWinklerSimilarity |
-                 UseLevenshteinSimilarity | UseLongestCommonSubsequence | UseLongestCommonSubstring |
-                 UseOverlapCoefficient |
-                 UseRatcliffObershelpSimilarity |
-                 UseSorensenDiceCoefficient,
+        UseDefault = UseJaroWinklerSimilarity | UseLevenshteinSimilarity,
 
-        CaseInsensitive = 1024
+        UseAll = UseEditSimilarity |
+        UseHammingSimilarity |
+        UseJaccardIndex | UseJaroWinklerSimilarity |
+        UseLevenshteinSimilarity | UseLongestCommonSubsequence | UseLongestCommonSubstring |
+        UseOverlapCoefficient |
+        UseRatcliffObershelpSimilarity |
+        UseSorensenDiceCoefficient,
+        
+        UseCaseInsensitive = 1024
     }
 }
