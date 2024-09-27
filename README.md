@@ -39,9 +39,8 @@ public static bool ApproximatelyEquals(
 
 Comparison options include case sensitivity (on by default) and different string similarity algorithms (all by default). The `SimilarityScore` method returns the mean value of all the algorithms specified in the comparison options.
 
-**IMPORTANT**
-
-There is no evidence to the average of two or more similarity algorithms being a good indicator of similarity, as the approaches differ. For example, the two strings below differ by one character. That yields high Edit similarity, but both the Jaccard index and the Sørensen-Dice coefficient are around the middle: 
+> [!IMPORTANT]
+> There is no evidence to the average of two or more similarity algorithms being a good indicator of similarity, as the approaches differ. For example, the two strings below differ by one character. That yields high Edit similarity, but both the Jaccard index and the Sørensen-Dice coefficient are around the middle: 
 
 ```cs
 var source = "BI105_PC_QUOTE_DTE_LST_ADD_OR_D";
