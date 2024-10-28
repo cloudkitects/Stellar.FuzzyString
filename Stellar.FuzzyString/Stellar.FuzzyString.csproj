@@ -1,12 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <RepositoryUrl>https://github.com/cloudkitects/Stellar.FuzzyString</RepositoryUrl>
+    <VersionPrefix>1.0.0</VersionPrefix>
+    <VersionSuffix>20211231</VersionSuffix>
   </PropertyGroup>
-
-  <ItemGroup>
-    <PackageReference Include="JetBrains.Annotations" Version="2020.1.0" />
-  </ItemGroup>
-
 </Project>
