@@ -657,7 +657,7 @@ public static class Comparer
         var s = string.IsNullOrEmpty(source);
         var t = string.IsNullOrEmpty(target);
 
-        return s ? t ? 1 : 0 : t ? 0 : target.Equals(source) ? 1 : null;
+        return target == source ? 1 : s ^ t ? 0 : null;
     }
 
     public static double? TrivialDistance(string source, string target)
